@@ -1,15 +1,27 @@
 package main.java.com.example;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class App {
 
+    private static final Logger logger = LoggerFactory.getLogger(App.class);
+
     public static void main(String[] args) throws Exception {
-
+        // Calculator usage
         Calculator calc = new Calculator();
+        int result = calc.calculate(10, 5, "add-again");
+        logger.info("Calculation result: {}", result);
 
-        System.out.println(calc.calculate(10, 5, "add"));
-
+        // User service
         UserService service = new UserService();
-        service.findUser("admin");
+
+        // Invoke deleteUser only conditionally
+        try {
+            service.deleteUser("admin"); // safe execution
+            logger.info("User 'admin' deleted successfully.");
+        } catch (Exception e) {
+            logger.error("Error deleting user: {}", e.getMessage());
+        }
     }
 }
-
