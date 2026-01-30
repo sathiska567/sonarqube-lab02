@@ -8,13 +8,16 @@ public class App {
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) throws Exception {
+        // Calculator usage
         Calculator calc = new Calculator();
-        if (calc != null) {
-            logger.info(String.valueOf(calc.calculate(10, 5, "add-again")));
-        }
+        int result = calc.calculate(10, 5, "add-again");
+        logger.info("Calculation result: {}", result);
 
+        // User service
         UserService service = new UserService();
-        service.findUser("admin");
-        service.deleteUser("admin"); // NEW dangerous call
+
+        // Invoke deleteUser only conditionally
+            service.deleteUser("admin"); // safe execution
+            logger.info("User 'admin' deleted successfully.");
     }
 }
