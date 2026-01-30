@@ -2,41 +2,33 @@ package main.java.com.example;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class UserService {
 
-    // SECURITY ISSUE: Hardcoded credentials
     private String password = "admin123";
 
-    // VULNERABILITY: SQL Injection
-    public void findUser(String username) throws SQLException {
+    // Check if user exists
+    public boolean userExists(String username) throws SQLException {
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/db", "root", password);
-             Statement st = conn.createStatement()) {
-            String query = "SELECT * FROM users WHERE name = '" + username + "'";
-            st.executeQuery(query);
+             PreparedStatement st = conn.prepareStatement("SELECT 1 FROM users WHERE name = ?")) {
+            st.setString(1, username);
+            try (ResultSet rs = st.executeQuery()) {
+                return rs.next(); // true if user exists
+            }
         }
     }
 
-    // SMELL: Unused method
-    public void notUsed() {
-        System.out.println("I am never called");
-    }
-
-    // EVEN WORSE: another SQL injection
-    public void deleteUser(String username) throws SQLException {
+    // Delete user safely
+    public boolean deleteUser(String username) throws SQLException {
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/db", "root", password);
-             Statement st = conn.createStatement()) {
-            String query = "DELETE FROM users WHERE name = '" + username + "'";
-            st.execute(query);
+             PreparedStatement st = conn.prepareStatement("DELETE FROM users WHERE name = ?")) {
+            st.setString(1, username);
+            return st.executeUpdate() > 0; // true if deletion happened
         }
     }
 
-    public class UserServiceException extends Exception {
-        public UserServiceException(String message) {
-            super(message);
-        }
-    }
-
+    // Removed unused notUsed() method
 }
