@@ -12,17 +12,13 @@ public class UserService {
 
     // VULNERABILITY: SQL Injection
     public void findUser(String username) throws SQLException {
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/db", "root", password);
+             Statement st = conn.createStatement()) {
+            String query
+                    = "SELECT * FROM users WHERE name = '" + username + "'";
 
-        Connection conn
-                = DriverManager.getConnection("jdbc:mysql://localhost/db",
-                        "root", password);
-
-        Statement st = conn.createStatement();
-
-        String query
-                = "SELECT * FROM users WHERE name = '" + username + "'";
-
-        st.executeQuery(query);
+            st.executeQuery(query);
+        }
     }
 
     // SMELL: Unused method
