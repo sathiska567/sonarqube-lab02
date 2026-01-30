@@ -17,7 +17,11 @@ public class App {
         UserService service = new UserService();
 
         // Invoke deleteUser only conditionally
+        try {
             service.deleteUser("admin"); // safe execution
             logger.info("User 'admin' deleted successfully.");
+        } catch (Exception e) {
+            logger.error("Error deleting user: {}", e.getMessage());
+        }
     }
 }
