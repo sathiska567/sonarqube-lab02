@@ -2,6 +2,7 @@ package main.java.com.example;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 public class UserService {
@@ -10,7 +11,7 @@ public class UserService {
     private String password = "admin123";
 
     // VULNERABILITY: SQL Injection
-    public void findUser(String username) throws Exception {
+    public void findUser(String username) throws SQLException {
 
         Connection conn
                 = DriverManager.getConnection("jdbc:mysql://localhost/db",
@@ -30,11 +31,17 @@ public class UserService {
     }
 
     // EVEN WORSE: another SQL injection
-    public void deleteUser(String username) throws Exception {
+    public void deleteUser(String username) throws SQLException {
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/db", "root", password);
         Statement st = conn.createStatement();
         String query = "DELETE FROM users WHERE name = '" + username + "'";
         st.execute(query);
+    }
+
+    public class UserServiceException extends Exception {
+        public UserServiceException(String message) {
+            super(message);
+        }
     }
 
 }
